@@ -5,18 +5,26 @@ const { createProduct } = require("./controller/Product");
 const productsRouter = require("./routes/Products");
 const categoriesRouter = require("./routes/Categories");
 const brandsRouter = require("./routes/Brands");
+const usersRouter = require("./routes/Users");
+const authRouter = require("./routes/Auth");
+const cartRouter = require("./routes/Cart");
+const orderRouter = require("./routes/Order");
+
 const cors = require("cors");
 server.use(cors({
     exposedHeaders: ["X-Total-Count"]
 }));
-//middleaware to enable the json data in express
+//middleware to enable the json data in express
 server.use(express.json()); // to parse the req.body
 
-//router middleaware
+//router middleware
 server.use("/products",productsRouter.router);
 server.use("/categories",categoriesRouter.router);
 server.use("/brands",brandsRouter.router);
-
+server.use("/users",usersRouter.router);
+server.use("/auth",authRouter.router);
+server.use("/cart",cartRouter.router);
+server.use("/orders",orderRouter.router);
 async function  main(){
     await mongoose.connect("mongodb://127.0.0.1:27017/ecommerce");
     console.log("database connected")
@@ -27,6 +35,10 @@ server.get("/", (req, res)=>{
     res.json({message: "Hello World"});
 })
 server.post("/products",createProduct);
+server.post("*",(req,res)=>{
+    res.json({message: "Invalid URL"});
+});
+
 server.listen(8080, ()=>{
     console.log("Server is Listening on port 8080");
 })
