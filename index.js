@@ -26,8 +26,13 @@ server.use("/auth",authRouter.router);
 server.use("/cart",cartRouter.router);
 server.use("/orders",orderRouter.router);
 async function  main(){
-    await mongoose.connect("mongodb://127.0.0.1:27017/ecommerce");
-    console.log("database connected")
+    // await mongoose.connect("mongodb://127.0.0.1:27017/ecommerce");
+//for atlas connection
+const password = encodeURIComponent("ecommerce");
+
+const MONGO_DB_URI = `mongodb+srv://ecommerce:ecommerce@cluster0.861gmvj.mongodb.net/ecommerce?retryWrites=true&w=majority`;  
+  console.log("database connected")
+await mongoose.connect(MONGO_DB_URI);
 }
 main().catch(err => console.log(err));
 
