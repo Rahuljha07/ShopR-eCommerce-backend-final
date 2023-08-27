@@ -1,6 +1,6 @@
 const { Order } = require("../model/Order");
-const { Product } = require("../model/Product");
-const { User } = require("../model/User");
+// const { Product } = require("../model/Product");
+// const { User } = require("../model/User");
 // const { sendMail, invoiceTemplate } = require("../services/common");
 
 exports.fetchOrdersByUser = async (req, res) => {
@@ -19,8 +19,9 @@ exports.createOrder = async (req, res) => {
     console.log(req.body);
   try {
     const order = new Order(req.body);
-    const doc = await order.save();
-    const result = await doc.populate('product');
+    const result = await order.save();
+    // const result = await doc.populate('product');
+    console.log("order result",result)
     res.status(201).json(result);
   } catch (err) {
     res.status(400).json(err);

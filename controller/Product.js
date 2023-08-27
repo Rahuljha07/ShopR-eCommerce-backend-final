@@ -17,8 +17,13 @@ exports.fetchAllProducts=async(req,res)=>{
   //for in  loop - key of object
   // {_page: 4, _limit: 10}
   //Todo : We have to try with multi category
- let query =  Product.find({deleted:{$ne:true}});
- let totalProductsQuery  =  Product.find({deleted:{$ne:true}});
+  let condition ={};
+  if(!req.query.admin){
+    condition = {deleted:{$ne:true}}
+  }
+
+ let query =  Product.find(condition);
+ let totalProductsQuery  =  Product.find(condition);
 
  if(req.query.category){
     query = query.find({category:req.query.category});

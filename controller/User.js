@@ -5,7 +5,7 @@ exports.fetchUserById = async (req, res) => {
   console.log(id)
   try {
     //second part is called projections
-    const user = await User.findById(id,"name email id ");
+    const user = await User.findById(id,{password:0});
     res.status(200).json(user);
   } catch (err) {
     res.status(400).json(err);
