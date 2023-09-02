@@ -2,14 +2,14 @@ const express = require("express");
 const server = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
-const { User } = require("./model/User");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const crypto = require("crypto");
+const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const jwt = require('jsonwebtoken');
+const cookieParser = require("cookie-parser");
 const { createProduct } = require("./controller/Product");
 const productsRouter = require("./routes/Products");
 const categoriesRouter = require("./routes/Categories");
@@ -18,23 +18,24 @@ const usersRouter = require("./routes/Users");
 const authRouter = require("./routes/Auth");
 const cartRouter = require("./routes/Cart");
 const orderRouter = require("./routes/Order");
-const { isAuth, sanitizeUser } = require("./services/common");
+const { User } = require("./model/User");
+const { isAuth, sanitizeUser, cookieExtractor } = require("./services/common");
 const SECRET_KEY = 'SECRET_KEY';
 //JWT Options
+
 const opts = {}
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.jwtFromRequest = cookieExtractor;
 opts.secretOrKey = SECRET_KEY;  //TODO: Add  this  secret key in your .env file
-
-
 //session middleawrase
+server.use(express.static('build'))
 server.use(session({
   secret: 'keyboard cat',
   resave: false, // don't save session if unmodified
   saveUninitialized: false, // don't create session until something stored
 }));
 //passport middleware 
+server.use(cookieParser());
 server.use(passport.authenticate('session'));
-
 server.use(cors({
   exposedHeaders: ["X-Total-Count"]
 }));
@@ -51,19 +52,20 @@ server.use("/cart", isAuth(),cartRouter.router);
 server.use("/orders",isAuth(), orderRouter.router);
 // local strategy applied to passport as middleware
 passport.use('local', new LocalStrategy(
-  async function (username, password, done) {
+  {usernameField:'email'},
+  async function (email, password, done) {
     try {
-      const user = await User.findOne({ email: username });
+      const user = await User.findOne({ email: email });
       // console.log("users : ",{user});
       if (!user) {
-        return done(null, false, { message: "Invalid Credentials" });
+          done(null, false, { message: "Invalid Credentials" }); //for safety
       }
       crypto.pbkdf2(password, user.salt, 310000, 32, 'sha256', async function (err, hashedPassword) {
         if (!crypto.timingSafeEqual(user.password, hashedPassword)) {
           return done(null, false, { message: "Invalid Credentials" });
         }
         const token = jwt.sign(sanitizeUser(user), SECRET_KEY);
-        done(null, token); // this line sends to serializer
+        done(null, {token}); // this line sends to serializer
       })
     } catch (error) {
       done(error);
@@ -72,8 +74,8 @@ passport.use('local', new LocalStrategy(
 ));
 //JWT Strategy
 passport.use('jwt', new JwtStrategy(opts, async function (jwt_payload, done) {
-  console.log({ jwt_payload });
-  const user = await User.findOne({ id: jwt_payload.sub });
+  // console.log({ jwt_payload });
+  const user = await User.findById(jwt_payload.id);
   try {
     if (user) {
       return done(null, sanitizeUser(user)); // this line sends to serializer
@@ -87,7 +89,7 @@ passport.use('jwt', new JwtStrategy(opts, async function (jwt_payload, done) {
 
 // this creates session variable req.user on being called from callbacks
 passport.serializeUser(function (user, cb) {
-  console.log("serializeUser", user);
+  // console.log("serializeUser", user);
   process.nextTick(function () {
     return cb(null, { id: user.id, role: user.role });
   });
@@ -95,7 +97,7 @@ passport.serializeUser(function (user, cb) {
 
 // this changes session variable req.user when called from authorized request
 passport.deserializeUser(function (user, cb) {
-  console.log("de-serializeUser", user);
+  // console.log("de-serializeUser", user); 
 
   process.nextTick(function () {
     return cb(null, user);

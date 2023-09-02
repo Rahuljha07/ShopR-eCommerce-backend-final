@@ -5,9 +5,10 @@ const { Order } = require("../model/Order");
 
 exports.fetchOrdersByUser = async (req, res) => {
     const { id } = req.user;
+    console.log("userid in orders")
     try {
       const orders = await Order.find({ user: id });
-  
+     console.log("orders",orders);
       res.status(200).json(orders);
     } catch (err) {
       res.status(400).json(err);
@@ -16,12 +17,12 @@ exports.fetchOrdersByUser = async (req, res) => {
 
   
 exports.createOrder = async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
   try {
     const order = new Order(req.body);
     const result = await order.save();
     // const result = await doc.populate('product');
-    console.log("order result",result)
+    // console.log("order result",result)
     res.status(201).json(result);
   } catch (err) {
     res.status(400).json(err);
@@ -85,7 +86,7 @@ exports.createOrder = async (req, res) => {
     }
   
     const totalDocs = await totalOrdersQuery.count().exec();
-    console.log({ totalDocs });
+    // console.log({ totalDocs });
   
     if (req.query._page && req.query._limit) {
       const pageSize = req.query._limit;

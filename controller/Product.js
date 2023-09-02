@@ -42,7 +42,7 @@ exports.fetchAllProducts=async(req,res)=>{
  }
 
  const totalDocs = await totalProductsQuery.count().exec();
-console.log({totalDocs})
+// console.log({totalDocs})
 
  if(req.query._limit && req.query._page){
     // const skip = (req.query._page-1)*req.query._limit
