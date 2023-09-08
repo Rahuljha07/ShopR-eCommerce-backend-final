@@ -16,6 +16,6 @@ exports.cookieExtractor = function(req) {
  //test token  
   // token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZWFkNTM3MzQyNDJjMjcwN2ZmNzgwYSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjkzNjI5NzI3fQ.8b9HCwJEeNgKDhyOxwcUt7OzcP5vxF3GyJyU-ouunWM'
   //admin token
- token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZjJkN2YzYjYxOTM1ZDdmZjZiZTU5YyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjkzNjM2NzgyfQ.k25peCoQzUpIRPEpy66-xRUWN4kMs5X27vvev_x_vGM'
+//  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZjJkN2YzYjYxOTM1ZDdmZjZiZTU5YyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjkzNjM2NzgyfQ.k25peCoQzUpIRPEpy66-xRUWN4kMs5X27vvev_x_vGM'
   return token;
 };
