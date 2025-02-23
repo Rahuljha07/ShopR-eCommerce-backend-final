@@ -162,7 +162,7 @@ server.post("/create-payment-intent", async (req, res) => {
 //payment integration Ends
 
 async function main() {
-  await mongoose.connect(process.env.MONGODB_URL_LOCAL);
+  await mongoose.connect(process.env.MONGODB_URL_ATLAS);
   console.log("database connected")
 
 }
