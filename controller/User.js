@@ -1,6 +1,7 @@
 const { User } = require('../model/User');
 
 exports.fetchUserById = async (req, res) => {
+  console.log("fetchuserbyid:",req.user);
   const { id } = req.user;
   try {
     //second part is called projections

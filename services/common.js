@@ -1,9 +1,30 @@
-const passport  = require("passport");
-exports.isAuth =(req, res, done) =>{
-  return passport.authenticate('jwt')
-}
+// const passport  = require("passport");
+const jwt = require("jsonwebtoken");
+
+// Fix the isAuth middleware function
+exports.isAuth = () => {
+  return (req, res, next) => {
+    console.log('Incoming request cookies:', req.cookies); // Debug log
+
+    const token = req.cookies.jwt;
+    console.log("token isauth:",token)
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    try {
+      const user = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      req.user = user;
+      next();
+    } catch (err) {
+      return res.status(403).json({ message: "Invalid token" });
+    }
+  }
+};
+
 
 exports.sanitizeUser = (user) =>{
+  console.log("user sani:",user)
     return {id:user.id,role:user.role};
 }
 
